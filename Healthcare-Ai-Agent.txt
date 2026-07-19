@@ -1,0 +1,33 @@
+# -----------------------------
+# Python Virtual Environment
+# -----------------------------
+venv/
+
+# -----------------------------
+# Python Cache
+# -----------------------------
+__pycache__/
+*.py[cod]
+
+# -----------------------------
+# Environment Variables (Secrets)
+# -----------------------------
+.env
+
+# -----------------------------
+# VS Code Settings
+# -----------------------------
+.vscode/
+
+# -----------------------------
+# Operating System Files
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# SQLite Database
+# (Remove this line later if you
+# want to upload sample data.)
+# -----------------------------
+*.db
