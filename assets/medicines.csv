@@ -1,0 +1,7 @@
+medicine_name,purpose,strength,dosage,frequency,take_after_food
+Crocin,Fever and body pain,500mg,1 tablet,Every 4 to 6 hours,Yes
+Dolo 650,Fever and headache,650mg,1 tablet,Every 6 hours,Yes
+Paracetamol,Fever and pain,500mg,1 tablet,Every 4 to 6 hours,Yes
+Vitamin C,Immunity support,500mg,1 tablet,Once daily (Morning),Yes
+Cetirizine,Allergy relief,10mg,1 tablet,Once daily (Night),No
+ORS,Dehydration,Standard Packet,1 packet,As needed,No

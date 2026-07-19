@@ -1,0 +1,37 @@
+====================================================================
+                 HEALTHCARE REFERENCE GUIDE FOR AI AGENT
+======================================================================
+
+### MEDICINE: PARACETAMOL (Generic)
+- Purpose: Used to reduce fever and relieve mild to moderate pain.
+- Standard Dosage: Adults can take one 500mg tablet every 4 to 6 hours as needed.
+- Maximum Limit: Strict limit of 4,000mg (8 tablets of 500mg) in a 24-hour period.
+- Common Side Effects: Nausea, skin rash.
+- Critical Warning: Severe liver damage can occur if the maximum daily limit is exceeded. Do not combine with other medications containing paracetamol.
+
+### MEDICINE: CROCIN (Brand Name)
+- Core Ingredient: Contains Paracetamol (500mg per standard tablet).
+- Purpose: Commonly used to reduce fever and relieve body pain.
+- Patient Advice: Take after food to prevent mild stomach irritation. Drink plenty of water.
+- Safety Warning: Since Crocin contains paracetamol, do not take it at the same time as generic Paracetamol or Dolo 650.
+
+### MEDICINE: DOLO 650 (Brand Name)
+- Core Ingredient: Contains a higher dose of Paracetamol (650mg per tablet).
+- Purpose: Used for treating high fever, severe headaches, and body pain.
+- Patient Advice: Take only when explicitly needed. 
+- Safety Warning: Because this is a stronger 650mg dose, adults must not take more than 6 tablets in one day. Do not combine with Crocin or generic Paracetamol.
+
+### MEDICINE: VITAMIN C (Supplement)
+- Purpose: Helps improve immunity and antioxidant support.
+- Patient Advice: Take one tablet daily after breakfast for optimal absorption.
+
+### GENERAL HEALTH AND LIFESTYLE TIPS
+- Hydration: Drink at least 2 liters (about 8 glasses) of clean water every day.
+- Sleep: Aim for 7 to 8 hours of uninterrupted sleep each night for physical recovery.
+- Activity: Engage in moderate exercise (like brisk walking) for 30 minutes daily.
+- Nutrition: Eat fresh fruits and green vegetables regularly to obtain natural vitamins.
+
+======================================================================
+                CRITICAL MEDICAL DISCLAIMER
+======================================================================
+This AI chatbot tool is built strictly for educational and informational tracking purposes. It does not provide official medical diagnoses, prescriptions, or treatment plans. This software is never a replacement for a qualified healthcare professional or doctor. Always consult a real physician for serious health concerns or emergencies.
