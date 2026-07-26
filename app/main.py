@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import sys
 
+from app.agents.health_agent import get_health_agent
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -79,20 +80,18 @@ if st.button("Get Answer"):
 
     if user_question.strip() == "":
         st.warning("Please enter a question.")
+else:
 
-    else:
+    with st.spinner("Searching health guide..."):
 
-        with st.spinner("Searching health guide..."):
+        # Load the AI agent
+        agent = get_health_agent()
 
-            # Load the AI agent
-            agent = get_health_agent()
+        # Ask the health question
+        response = agent({
+            "question": user_question
+        })
 
-            # Ask the AI
-            response = agent.invoke({
-                "input": user_question
-            })
-
-            # Display the answer
-            st.success("Answer")
-
-            st.write(response["answer"])
+        # Display the answer
+        st.success("Answer")
+        st.write(response)
