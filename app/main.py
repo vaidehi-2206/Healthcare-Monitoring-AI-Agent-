@@ -2,8 +2,10 @@ import streamlit as st
 import os
 import sys
 
-from app.agents.health_agent import get_health_agent
+from agents.health_agent import get_health_agent
 from dotenv import load_dotenv
+
+from app.agents import health_agent
 
 load_dotenv()
 
@@ -54,7 +56,7 @@ with st.expander("🛠️ Developer Debug: Test Vector Search Engine"):
         # Build the vector search pipeline
         retriever = create_vector_store()
         # Find the 2 closest matches in our health guide text file
-        matched_chunks = retriever.get_relevant_documents(user_test_query)
+        matched_chunks = retriever.invoke(user_test_query)
         
         st.write(f"🔍 **Search engine found {len(matched_chunks)} matching segments:**")
         for idx, doc in enumerate(matched_chunks):
@@ -77,21 +79,18 @@ user_question = st.text_input(
 )
 
 if st.button("Get Answer"):
-
     if user_question.strip() == "":
         st.warning("Please enter a question.")
-else:
+    else:
+        with st.spinner("Searching health guide..."):
+            # Load the AI agent
+            agent = get_health_agent()
 
-    with st.spinner("Searching health guide..."):
+            # Ask the health question
+            response = agent({
+                "question": user_question
+            })
 
-        # Load the AI agent
-        agent = get_health_agent()
-
-        # Ask the health question
-        response = agent({
-            "question": user_question
-        })
-
-        # Display the answer
-        st.success("Answer")
-        st.write(response)
+            # Display the answer
+            st.success("Answer")
+            st.write(response)

@@ -1,9 +1,9 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-
-from app.rag.vector_store import create_vector_store
-
+from rag.vector_store import create_vector_store
+from langchain.tools import Tool
+from langchain.agents import initialize_agent, AgentType
 
 def get_health_agent():
     """
@@ -69,3 +69,29 @@ def get_health_agent():
         return response.content
 
     return health_agent
+
+
+retriever = create_vector_store()
+
+def medical_knowledge_search(query: str) -> str:
+    # Uses the updated invoke() syntax
+    docs = retriever.invoke(query) 
+    return "\n\n".join([doc.page_content for doc in docs])
+
+search_tool = Tool(
+    name="Medical_Database_Search",
+    func=medical_knowledge_search,
+    description="Useful for searching medicine information, dosages, side effects, and health guidelines."
+)
+
+
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.3)
+
+tools = [search_tool]
+
+health_agent = initialize_agent(
+    tools=tools,
+    llm=llm,
+    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+    verbose=True
+)
