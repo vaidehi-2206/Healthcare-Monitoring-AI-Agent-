@@ -1,97 +1,72 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.tools import tool
+from langchain.agents import create_agent
+
 from rag.vector_store import create_vector_store
-from langchain.tools import Tool
-from langchain.agents import initialize_agent, AgentType
-
-def get_health_agent():
-    """
-    Creates a Healthcare AI RAG Agent using Google Gemini.
-    """
-
-    # Create vector store retriever
-    retriever = create_vector_store()
-
-    # Create Gemini LLM
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash",
-        temperature=0,
-    )
-
-    # Prompt for healthcare assistant
-    prompt = ChatPromptTemplate.from_template(
-        """
-        You are a helpful Personal Health Assistant.
-
-        Use the following healthcare information to answer the user's question.
-
-        Context:
-        {context}
-
-        User Question:
-        {question}
-
-        Instructions:
-        - Give a clear and simple answer.
-        - Do not make a diagnosis.
-        - Do not prescribe medicines.
-        - If the information is not available in the context, say that you
-          do not have enough information.
-        - Encourage the user to consult a qualified healthcare professional
-          for serious or emergency concerns.
-
-        Answer:
-        """
-    )
-
-    # Create the RAG chain
-    def health_agent(inputs):
-        question = inputs["question"]
-
-        # Search relevant healthcare information
-        documents = retriever.invoke(question)
-
-        # Combine retrieved documents
-        context = "\n\n".join(
-            document.page_content
-            for document in documents
-        )
-
-        # Generate answer
-        response = llm.invoke(
-            prompt.format_messages(
-                context=context,
-                question=question,
-            )
-        )
-
-        return response.content
-
-    return health_agent
 
 
+# Create the retriever
 retriever = create_vector_store()
 
+
+@tool
 def medical_knowledge_search(query: str) -> str:
-    # Uses the updated invoke() syntax
-    docs = retriever.invoke(query) 
-    return "\n\n".join([doc.page_content for doc in docs])
+    """Search the medical knowledge database for health information."""
+    
+    docs = retriever.invoke(query)
 
-search_tool = Tool(
-    name="Medical_Database_Search",
-    func=medical_knowledge_search,
-    description="Useful for searching medicine information, dosages, side effects, and health guidelines."
+    if not docs:
+        return "No relevant medical information was found."
+
+    return "\n\n".join(
+        doc.page_content
+        for doc in docs
+    )
+
+
+# Create Gemini model
+model = ChatGoogleGenerativeAI(
+    model="gemini-3.6-flash",
+    temperature=0,
 )
 
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.3)
+# Tools available to the agent
+tools = [
+    medical_knowledge_search
+]
 
-tools = [search_tool]
 
-health_agent = initialize_agent(
+# Create the healthcare agent
+agent = create_agent(
+    model=model,
     tools=tools,
-    llm=llm,
-    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-    verbose=True
+    system_prompt="""
+You are a helpful Personal Health Assistant.
+
+Your job is to answer health-related questions using the medical
+knowledge available through the medical_knowledge_search tool.
+
+Instructions:
+
+1. Search the medical knowledge database before answering.
+2. Give simple and clear answers.
+3. Do not make a diagnosis.
+4. Do not prescribe medicines.
+5. Do not invent medical information.
+6. If the medical database does not contain enough information,
+   clearly say that there is not enough information available.
+7. For serious or emergency symptoms, recommend consulting
+   a qualified healthcare professional.
+"""
 )
+
+
+def get_health_agent():
+    """Return the healthcare AI agent."""
+    return agent

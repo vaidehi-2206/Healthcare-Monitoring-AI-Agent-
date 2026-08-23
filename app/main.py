@@ -3,9 +3,10 @@ import os
 import sys
 
 from agents.health_agent import get_health_agent
+agent = get_health_agent()
 from dotenv import load_dotenv
 
-from app.agents import health_agent
+
 
 load_dotenv()
 
@@ -79,18 +80,23 @@ user_question = st.text_input(
 )
 
 if st.button("Get Answer"):
-    if user_question.strip() == "":
-        st.warning("Please enter a question.")
+
+    if user_question.strip():
+
+        result = agent.invoke(
+            {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": user_question
+                    }
+                ]
+            }
+        )
+
+        response = result["messages"][-1].content
+
+        st.success(response)
+
     else:
-        with st.spinner("Searching health guide..."):
-            # Load the AI agent
-            agent = get_health_agent()
-
-            # Ask the health question
-            response = agent({
-                "question": user_question
-            })
-
-            # Display the answer
-            st.success("Answer")
-            st.write(response)
+        st.warning("Please enter a question.")

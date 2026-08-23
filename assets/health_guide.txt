@@ -1,5 +1,5 @@
 ====================================================================
-                 HEALTHCARE REFERENCE GUIDE FOR AI AGENT
+                HEALTHCARE REFERENCE GUIDE FOR AI AGENT
 ======================================================================
 
 ### MEDICINE: PARACETAMOL (Generic)
