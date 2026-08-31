@@ -101,9 +101,8 @@ if st.button("🔍 Get Answer", use_container_width=True):
                 st.write(response)
 
             except Exception as e:
-                st.error(
-                    "Sorry, I could not process your question. "
-                    "Please check the AI service and try again."
+    st.error("❌ Error while processing your question:")
+    st.exception(e)
                 )
 
     else:
