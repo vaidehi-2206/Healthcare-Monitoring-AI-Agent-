@@ -1,13 +1,10 @@
+
 import streamlit as st
 import os
 import sys
-
-from agents.health_agent import get_health_agent
-agent = get_health_agent()
 from dotenv import load_dotenv
 
-
-
+# Load environment variables
 load_dotenv()
 
 # -----------------------------
@@ -23,15 +20,6 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 # -----------------------------
-# Import Vector Store
-
-# -----------------------------
-try:
-    from rag.vector_store import create_vector_store
-except ModuleNotFoundError:
-    from app.rag.vector_store import create_vector_store
-
-# -----------------------------
 # Import Health AI Agent
 # -----------------------------
 try:
@@ -40,63 +28,97 @@ except ModuleNotFoundError:
     from app.agents.health_agent import get_health_agent
 
 # -----------------------------
+# Create AI Agent
+# -----------------------------
+agent = get_health_agent()
+
+# -----------------------------
 # Streamlit Page Settings
 # -----------------------------
 st.set_page_config(
-    page_title="Health Assistant",
-    page_icon="🏥"
+    page_title="Healthcare Monitoring AI Agent",
+    page_icon="🏥",
+    layout="centered"
 )
 
-st.title("🏥 My Personal Health Assistant")
+# -----------------------------
+# Header
+# -----------------------------
+st.title("🏥 Healthcare Monitoring AI Agent")
 
-# --- NEW SEARCH ENGINE TESTER ---
-with st.expander("🛠️ Developer Debug: Test Vector Search Engine"):
-    user_test_query = st.text_input("Type a keyword to search your text file (e.g., Crocin):", key="test_search")
-    
-    if user_test_query:
-        # Build the vector search pipeline
-        retriever = create_vector_store()
-        # Find the 2 closest matches in our health guide text file
-        matched_chunks = retriever.invoke(user_test_query)
-        
-        st.write(f"🔍 **Search engine found {len(matched_chunks)} matching segments:**")
-        for idx, doc in enumerate(matched_chunks):
-            st.info(f"**Segment {idx + 1}:**\n{doc.page_content}")
-# ---------------------------------
-
-st.write("Welcome! Let's track your health and medications.")
-
-# ==========================================
-# AI Health Assistant
-# ==========================================
+st.write(
+    "Ask healthcare-related questions and get AI-powered "
+    "information using a medical knowledge base."
+)
 
 st.divider()
 
-st.subheader("💬 Ask Your Personal Health Assistant")
+# -----------------------------
+# Health Assistant
+# -----------------------------
+st.subheader("💬 Ask Your Health Assistant")
 
-user_question = st.text_input(
-    "Ask a health-related question:",
-    placeholder="Example: What is fever?"
+user_question = st.text_area(
+    "Enter your question:",
+    placeholder="Example: What are the symptoms of fever?",
+    height=100
 )
 
-if st.button("Get Answer"):
+if st.button("🔍 Get Answer", use_container_width=True):
 
     if user_question.strip():
 
-        result = agent.invoke(
-            {
-                "messages": [
+        with st.spinner("🤖 Finding the best answer..."):
+
+            try:
+                result = agent.invoke(
                     {
-                        "role": "user",
-                        "content": user_question
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": user_question
+                            }
+                        ]
                     }
-                ]
-            }
-        )
+                )
 
-        response = result["messages"][-1].content
+                response = result["messages"][-1].content
 
-        st.success(response)
+                # Convert Gemini/LangChain response to normal text
+                if isinstance(response, list):
+                    text_parts = []
+
+                    for item in response:
+                        if isinstance(item, dict):
+                            if "text" in item:
+                                text_parts.append(item["text"])
+                        else:
+                            text_parts.append(str(item))
+
+                    response = "\n".join(text_parts)
+
+                st.subheader("🤖 AI Response")
+                st.write(response)
+
+            except Exception as e:
+                st.error(
+                    "Sorry, I could not process your question. "
+                    "Please check the AI service and try again."
+                )
 
     else:
-        st.warning("Please enter a question.")
+        st.warning("⚠️ Please enter a health-related question.")
+
+# -----------------------------
+# Health Disclaimer
+# -----------------------------
+st.divider()
+
+st.warning(
+    "⚠️ Health Disclaimer: This AI assistant provides general "
+    "health information for educational purposes only. It is not "
+    "a substitute for professional medical advice, diagnosis, or treatment."
+)
+
+st.caption("Healthcare Monitoring AI Agent • Powered by AI + RAG")
+
