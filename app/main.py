@@ -101,9 +101,8 @@ if st.button("🔍 Get Answer", use_container_width=True):
                 st.write(response)
 
             except Exception as e:
-    st.error("❌ Error while processing your question:")
-    st.exception(e)
-                )
+                st.error("❌ Error while processing your question:")
+                st.exception(e)
 
     else:
         st.warning("⚠️ Please enter a health-related question.")
@@ -120,4 +119,5 @@ st.warning(
 )
 
 st.caption("Healthcare Monitoring AI Agent • Powered by AI + RAG")
+
 
